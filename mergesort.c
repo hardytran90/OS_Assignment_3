@@ -60,8 +60,34 @@ void my_mergesort(int left, int right){
 /* this function will be called by the testing program. */
 void * parallel_mergesort(void *arg){	
 	struct argument *my_arg_pointer = (struct argument *)arg;
-	//printf("Start parallel_mergesort left: %d right: %d level: %d \n", my_arg_pointer->left, my_arg_pointer->right, my_arg_pointer->level);
-	my_mergesort(my_arg_pointer->left, my_arg_pointer->right);
+	
+	int left = my_arg_pointer->left;
+	int right = my_arg_pointer->right;
+	int level = my_arg_pointer->level;
+	int mid = (left + right) / 2;
+
+	//printf("Start parallel_mergesort left: %d right: %d level: %d \n", left, right, level);
+	if (level < cutoff) {
+		pthread_t tid1, tid2;
+		
+
+        struct argument *args1 = buildArgs(left, mid, level + 1);
+        struct argument *args2 = buildArgs(mid + 1, right, level + 1);	
+        
+
+        pthread_create(&tid1, NULL, parallel_mergesort, args1);
+        pthread_create(&tid2, NULL, parallel_mergesort, args2);
+
+        pthread_join(tid1, NULL);
+        pthread_join(tid2, NULL);
+        //free(args1);
+        //free(args2);
+        merge(left, mid, mid + 1, right);
+	} else {
+		my_mergesort(my_arg_pointer->left, my_arg_pointer->right);	
+	}
+
+	
 	//free(arg);
 	//printf("Finished parallel_mergesort\n");
 	return NULL;

@@ -4,7 +4,9 @@ CFLAGS = -Wall -Wpointer-arith -Wstrict-prototypes -std=gnu89 -fPIC -MMD -MP -lp
 all: test-mergesort
 
 #This builds an executable 
-test-mergesort: test-mergesort.o mergesort.o
+#test-mergesort: test-mergesort.o mergesort.o
+#	$(CC) $(CFLAGS) -o $@ $?
+test-mergesort: mergesort.o test-mergesort.o
 	$(CC) $(CFLAGS) -o $@ $?
 
 .PHONY: clean
